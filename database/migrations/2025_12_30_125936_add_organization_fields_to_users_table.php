@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('organization_id')->nullable()->after('id')->constrained()->onDelete('cascade');
+            $table->boolean('is_general_manager')->default(false)->after('email_verified_at');
+            $table->boolean('is_org_admin')->default(false)->after('is_general_manager');
+            $table->string('language_preference', 2)->default('en')->after('is_org_admin');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['organization_id']);
+            $table->dropColumn(['organization_id', 'is_general_manager', 'is_org_admin', 'language_preference']);
+        });
+    }
+};
