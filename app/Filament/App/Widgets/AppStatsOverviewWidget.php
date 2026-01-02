@@ -10,10 +10,24 @@ use Illuminate\Support\Facades\Auth;
 
 class AppStatsOverviewWidget extends BaseWidget
 {
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return false;
+        }
+
+        $settings = $user->organization->settings ?? [];
+
+        return (bool) ($settings['widgets']['AppStatsOverviewWidget'] ?? true);
+    }
+
     protected function getStats(): array
     {
         $user = Auth::user();
-        if (!$user) return [];
+        if (! $user) {
+            return [];
+        }
 
         $orgId = $user->organization_id;
 

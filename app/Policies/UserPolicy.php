@@ -11,8 +11,10 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        // GM can view all, org admin can view org users
-        return $user->isGeneralManager() || $user->isOrgAdmin();
+        // GM can view all, org admin can view org users, or user with permission
+        return $user->isGeneralManager() ||
+               $user->isOrgAdmin() ||
+               $user->hasPermission('users.view');
     }
 
     /**
@@ -25,9 +27,13 @@ class UserPolicy
             return true;
         }
 
-        // Org admin can view users in their org
-        return $user->isOrgAdmin() && 
-               $user->organization_id === $model->organization_id;
+        // Must belong to same organization
+        if ($user->organization_id !== $model->organization_id) {
+            return false;
+        }
+
+        // Org admin or user with permission
+        return $user->isOrgAdmin() || $user->hasPermission('users.view');
     }
 
     /**
@@ -35,8 +41,10 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        // GM can create anywhere, org admin can create in their org
-        return $user->isGeneralManager() || $user->isOrgAdmin();
+        // GM can create anywhere, org admin or user with permission
+        return $user->isGeneralManager() ||
+               $user->isOrgAdmin() ||
+               $user->hasPermission('users.create');
     }
 
     /**
@@ -54,10 +62,14 @@ class UserPolicy
             return true;
         }
 
-        // Org admin can update users in their org (but not make them GM)
-        return $user->isOrgAdmin() && 
-               $user->organization_id === $model->organization_id &&
-               !$model->isGeneralManager();
+        // Must belong to same organization
+        if ($user->organization_id !== $model->organization_id) {
+            return false;
+        }
+
+        // Org admin or user with permission (but not make them GM)
+        return ($user->isOrgAdmin() || $user->hasPermission('users.edit')) &&
+               ! $model->isGeneralManager();
     }
 
     /**
@@ -72,13 +84,17 @@ class UserPolicy
 
         // GM can delete all (except other GMs)
         if ($user->isGeneralManager()) {
-            return !$model->isGeneralManager();
+            return ! $model->isGeneralManager();
         }
 
-        // Org admin can delete users in their org (but not GMs)
-        return $user->isOrgAdmin() && 
-               $user->organization_id === $model->organization_id &&
-               !$model->isGeneralManager();
+        // Must belong to same organization
+        if ($user->organization_id !== $model->organization_id) {
+            return false;
+        }
+
+        // Org admin or user with permission (but not GMs)
+        return ($user->isOrgAdmin() || $user->hasPermission('users.delete')) &&
+               ! $model->isGeneralManager();
     }
 
     /**

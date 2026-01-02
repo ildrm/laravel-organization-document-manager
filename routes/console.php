@@ -8,5 +8,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-// Schedule reminder dispatch to run every minute
-Schedule::command('reminders:dispatch')->everyMinute();
+// Schedule reminder processing to run every minute
+Schedule::command('app:process-reminders')->everyMinute();

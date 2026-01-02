@@ -11,9 +11,8 @@ use App\Filament\Admin\Resources\Organizations\Schemas\OrganizationInfolist;
 use App\Filament\Admin\Resources\Organizations\Tables\OrganizationsTable;
 use App\Models\Organization;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,8 +21,20 @@ class OrganizationResource extends Resource
 {
     protected static ?string $model = Organization::class;
 
-    protected static ?string $modelLabel = 'سازمان';
-    protected static ?string $pluralModelLabel = 'سازمان‌ها';
+    public static function getModelLabel(): string
+    {
+        return __('common.organization');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('common.organizations');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('common.organizations');
+    }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office-2';
 

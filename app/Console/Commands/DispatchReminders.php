@@ -33,6 +33,7 @@ class DispatchReminders extends Command
 
         if ($reminders->isEmpty()) {
             $this->info('No due reminders found.');
+
             return Command::SUCCESS;
         }
 

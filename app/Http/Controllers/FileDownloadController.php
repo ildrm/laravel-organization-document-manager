@@ -22,7 +22,7 @@ class FileDownloadController extends Controller
     public function download(Request $request, Document $document, string $fileKey): StreamedResponse
     {
         // Check authorization
-        if (!auth()->user()->can('view', $document)) {
+        if (! auth()->user()->can('view', $document)) {
             abort(403, 'Unauthorized');
         }
 
@@ -33,12 +33,12 @@ class FileDownloadController extends Controller
         $files = $document->files ?? [];
         $fileInfo = $files[$fileKey] ?? null;
 
-        if (!$fileInfo) {
+        if (! $fileInfo) {
             abort(404, 'File not found');
         }
 
         $filePath = $fileInfo['path'] ?? null;
-        if (!$filePath || !Storage::disk('private')->exists($filePath)) {
+        if (! $filePath || ! Storage::disk('private')->exists($filePath)) {
             abort(404, 'File not found on disk');
         }
 
@@ -57,7 +57,7 @@ class FileDownloadController extends Controller
     public function view(Request $request, Document $document, string $fileKey): StreamedResponse
     {
         // Check authorization
-        if (!auth()->user()->can('view', $document)) {
+        if (! auth()->user()->can('view', $document)) {
             abort(403, 'Unauthorized');
         }
 
@@ -68,12 +68,12 @@ class FileDownloadController extends Controller
         $files = $document->files ?? [];
         $fileInfo = $files[$fileKey] ?? null;
 
-        if (!$fileInfo) {
+        if (! $fileInfo) {
             abort(404, 'File not found');
         }
 
         $filePath = $fileInfo['path'] ?? null;
-        if (!$filePath || !Storage::disk('private')->exists($filePath)) {
+        if (! $filePath || ! Storage::disk('private')->exists($filePath)) {
             abort(404, 'File not found on disk');
         }
 

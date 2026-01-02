@@ -19,7 +19,7 @@ class CreateRole extends CreateRecord
         // Actually, Role model likely needs slug. I should add automatic slug generation in model or here.
         // For now, I'll generate a simple slug.
         if (empty($data['slug'])) {
-            $data['slug'] = \Illuminate\Support\Str::slug($data['name']) . '-' . $data['organization_id'];
+            $data['slug'] = \Illuminate\Support\Str::slug($data['name']).'-'.$data['organization_id'];
         }
 
         return $data;

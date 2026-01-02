@@ -34,6 +34,7 @@ class SendReminderEmail implements ShouldQueue
         $reminder->refresh();
         if ($reminder->is_sent) {
             Log::info("Reminder {$reminder->id} already sent, skipping.");
+
             return;
         }
 
@@ -44,6 +45,7 @@ class SendReminderEmail implements ShouldQueue
             if (empty($emails)) {
                 Log::warning("No email recipients for reminder {$reminder->id}");
                 $reminderService->markAsSent($reminder);
+
                 return;
             }
 
@@ -58,7 +60,7 @@ class SendReminderEmail implements ShouldQueue
             }
 
             $reminderService->markAsSent($reminder);
-            Log::info("Reminder {$reminder->id} sent successfully to " . count($emails) . " recipient(s).");
+            Log::info("Reminder {$reminder->id} sent successfully to ".count($emails).' recipient(s).');
         } catch (\Exception $e) {
             Log::error("Failed to send reminder {$reminder->id}: {$e->getMessage()}");
             throw $e; // Will trigger retry

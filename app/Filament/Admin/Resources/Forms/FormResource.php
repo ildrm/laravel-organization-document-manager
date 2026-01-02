@@ -13,7 +13,6 @@ use App\Models\Form;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,8 +21,20 @@ class FormResource extends Resource
 {
     protected static ?string $model = Form::class;
 
-    protected static ?string $modelLabel = 'فرم';
-    protected static ?string $pluralModelLabel = 'فرم‌ها';
+    public static function getModelLabel(): string
+    {
+        return __('common.form');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('common.forms');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('common.forms');
+    }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clipboard-document-list';
 

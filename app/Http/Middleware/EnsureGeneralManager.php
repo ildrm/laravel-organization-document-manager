@@ -15,7 +15,7 @@ class EnsureGeneralManager
     {
         $user = $request->user();
 
-        if (!$user || !$user->isGeneralManager()) {
+        if (! $user || ! $user->isGeneralManager()) {
             abort(403, 'Access denied. General Manager access required.');
         }
 

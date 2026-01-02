@@ -21,25 +21,25 @@ class ReminderService
 
         // Find date fields with reminder enabled
         foreach ($schema['fields'] ?? [] as $field) {
-            if (!in_array($field['type'], ['date', 'date_time', 'solar_date', 'solar_date_time'])) {
+            if (! in_array($field['type'], ['date', 'date_time', 'solar_date', 'solar_date_time'])) {
                 continue;
             }
 
-            if (!($field['reminder_enabled'] ?? false)) {
+            if (! ($field['reminder_enabled'] ?? false)) {
                 continue;
             }
 
             $fieldKey = $field['key'];
             $dateValue = $document->data[$fieldKey] ?? null;
 
-            if (!$dateValue) {
+            if (! $dateValue) {
                 continue;
             }
 
             // Parse date value
             $reminderDate = $this->parseDateForReminder($dateValue, $field['type']);
 
-            if (!$reminderDate) {
+            if (! $reminderDate) {
                 continue;
             }
 
@@ -70,7 +70,7 @@ class ReminderService
      */
     protected function parseDateForReminder(mixed $dateValue, string $fieldType): ?string
     {
-        if (!$dateValue) {
+        if (! $dateValue) {
             return null;
         }
 
@@ -79,6 +79,7 @@ class ReminderService
                 // Convert Jalali to Gregorian
                 $formSchemaService = app(FormSchemaService::class);
                 $includeTime = $fieldType === 'solar_date_time';
+
                 return $formSchemaService->convertJalaliToGregorian($dateValue, $includeTime);
             }
 
@@ -90,6 +91,7 @@ class ReminderService
                 'field_type' => $fieldType,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -106,7 +108,7 @@ class ReminderService
         if ($document->organization) {
             $orgAdmins = $document->organization->admins;
             foreach ($orgAdmins as $admin) {
-                if (!in_array($admin->email, $emails)) {
+                if (! in_array($admin->email, $emails)) {
                     $emails[] = $admin->email;
                 }
             }

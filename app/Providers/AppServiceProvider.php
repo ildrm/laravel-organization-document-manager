@@ -12,8 +12,8 @@ use App\Policies\FormPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
-use Illuminate\Support\Facades\Gate;
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,8 +44,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        foreach ($this->policies as $model => $policy) {
+            Gate::policy($model, $policy);
+        }
+
         \App\Models\Document::observe(\App\Observers\DocumentObserver::class);
-        
+
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
                 ->locales(['en', 'fa']);

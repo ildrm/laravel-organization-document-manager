@@ -40,7 +40,7 @@ class OrganizationPolicy
     public function update(User $user, Organization $organization): bool
     {
         // GM can update all, org admin can update their own
-        return $user->isGeneralManager() || 
+        return $user->isGeneralManager() ||
                ($user->isOrgAdmin() && $user->organization_id === $organization->id);
     }
 

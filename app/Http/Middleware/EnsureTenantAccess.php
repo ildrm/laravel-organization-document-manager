@@ -15,7 +15,7 @@ class EnsureTenantAccess
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             abort(403, 'Unauthorized');
         }
 
@@ -25,7 +25,7 @@ class EnsureTenantAccess
         }
 
         // Ensure user has an organization
-        if (!$user->organization_id) {
+        if (! $user->organization_id) {
             abort(403, 'User must belong to an organization');
         }
 

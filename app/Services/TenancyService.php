@@ -14,8 +14,8 @@ class TenancyService
     public function getCurrentOrganization(): ?Organization
     {
         $user = Auth::user();
-        
-        if (!$user) {
+
+        if (! $user) {
             return null;
         }
 
@@ -36,7 +36,7 @@ class TenancyService
             return true; // GM can access all
         }
 
-        if (!$organization) {
+        if (! $organization) {
             return false;
         }
 
@@ -51,7 +51,7 @@ class TenancyService
         $org = $organization ?? $this->getCurrentOrganization();
 
         // If no organization (GM) or explicit null, don't scope
-        if (!$org) {
+        if (! $org) {
             return $query;
         }
 
@@ -65,7 +65,7 @@ class TenancyService
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             abort(403, 'Unauthorized');
         }
 
@@ -73,7 +73,7 @@ class TenancyService
             return; // GM can access all
         }
 
-        if (!$organization) {
+        if (! $organization) {
             abort(403, 'Organization required');
         }
 

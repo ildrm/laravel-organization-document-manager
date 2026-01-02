@@ -4,19 +4,19 @@ namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\RoleResource\Pages;
 use App\Models\Role;
+use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Schemas\Components\Section;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use BackedEnum;
-use Filament\Support\Enums\Icon as Heroicon;
 
 class RoleResource extends Resource
 {
@@ -24,17 +24,17 @@ class RoleResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Role');
+        return __('common.role');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Roles');
+        return __('common.roles');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Roles');
+        return __('common.roles');
     }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
@@ -47,13 +47,24 @@ class RoleResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
+            ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('description')
                     ->maxLength(255),
-                // Permissions selection could be added here later
+                Section::make(__('common.permissions'))
+                    ->description(__('common.role_permissions_description'))
+                    ->schema([
+                        Forms\Components\CheckboxList::make('permissions')
+                            ->relationship('permissions', 'name')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => '['.__("permissions.group.{$record->group}").'] '.__("permissions.{$record->name}")
+                            )
+                            ->columns(2)
+                            ->gridDirection('vertical')
+                            ->bulkToggleable()
+                            ->searchable(),
+                    ]),
             ]);
     }
 

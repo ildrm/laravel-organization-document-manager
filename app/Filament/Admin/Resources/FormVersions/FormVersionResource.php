@@ -13,7 +13,6 @@ use App\Models\FormVersion;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,8 +21,20 @@ class FormVersionResource extends Resource
 {
     protected static ?string $model = FormVersion::class;
 
-    protected static ?string $modelLabel = 'نسخه فرم';
-    protected static ?string $pluralModelLabel = 'نسخه‌های فرم';
+    public static function getModelLabel(): string
+    {
+        return __('common.form_version');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('common.form_versions');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('common.form_versions');
+    }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';
 

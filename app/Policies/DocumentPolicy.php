@@ -12,8 +12,10 @@ class DocumentPolicy
      */
     public function viewAny(User $user): bool
     {
-        // GM can view all, org users can view their org's documents
-        return true; // Checked at query level
+        // GM can view all, org users need permission or be org admin
+        return $user->isGeneralManager() ||
+               $user->isOrgAdmin() ||
+               $user->hasPermission('documents.view');
     }
 
     /**
@@ -41,8 +43,8 @@ class DocumentPolicy
     public function create(User $user): bool
     {
         // GM can create, org users need permission
-        return $user->isGeneralManager() || 
-               $user->hasPermission('documents.create') || 
+        return $user->isGeneralManager() ||
+               $user->hasPermission('documents.create') ||
                $user->isOrgAdmin();
     }
 

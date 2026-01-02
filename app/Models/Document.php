@@ -16,11 +16,13 @@ class Document extends Model
         'organization_id',
         'form_id',
         'form_version_id',
+        'title',
         'created_by',
         'data',
         'files',
         'status',
         'notes',
+        'reminders', // Temporary field for form handling
     ];
 
     protected function casts(): array

@@ -18,6 +18,7 @@ class Organization extends Model
         'address',
         'is_active',
         'email_verified_at',
+        'settings',
     ];
 
     protected function casts(): array
@@ -25,6 +26,7 @@ class Organization extends Model
         return [
             'is_active' => 'boolean',
             'email_verified_at' => 'datetime',
+            'settings' => 'array',
         ];
     }
 

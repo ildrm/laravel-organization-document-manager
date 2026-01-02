@@ -10,6 +10,18 @@ class FileInteractionChart extends ChartWidget
 {
     protected ?string $heading = 'Document Interactions';
 
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return false;
+        }
+
+        $settings = $user->organization->settings ?? [];
+
+        return (bool) ($settings['widgets']['FileInteractionChart'] ?? true);
+    }
+
     protected function getData(): array
     {
         $orgId = Auth::user()->organization_id;
@@ -25,7 +37,7 @@ class FileInteractionChart extends ChartWidget
             ->where('subject_type', \App\Models\Document::class)
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
-            
+
         // Make a simple comparison bar chart
         return [
             'datasets' => [
@@ -42,5 +54,19 @@ class FileInteractionChart extends ChartWidget
     protected function getType(): string
     {
         return 'bar';
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'ticks' => [
+                        'stepSize' => 1,
+                        'precision' => 0,
+                    ],
+                ],
+            ],
+        ];
     }
 }

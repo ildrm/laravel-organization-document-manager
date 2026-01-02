@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Resources\Documents;
+namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\Documents\Pages\CreateDocument;
 use App\Filament\App\Resources\Documents\Pages\EditDocument;
@@ -9,9 +9,8 @@ use App\Filament\App\Resources\Documents\Schemas\DocumentForm;
 use App\Filament\App\Resources\Documents\Tables\DocumentsTable;
 use App\Models\Document;
 use BackedEnum;
-use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -24,21 +23,20 @@ class DocumentResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Document');
+        return __('common.document');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('Documents');
+        return __('common.documents');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Documents');
+        return __('common.documents');
     }
 
-
-    protected static ?string $recordTitleAttribute = '--panel=app';
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
     {

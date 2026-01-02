@@ -16,6 +16,7 @@ class FormVersion extends Model
         'form_id',
         'version',
         'schema',
+        'title_pattern',
         'is_published',
         'is_current',
         'created_by',

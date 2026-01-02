@@ -5,7 +5,6 @@ namespace App\Filament\Admin\Resources\FormVersions\Schemas;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
@@ -19,263 +18,274 @@ class FormVersionForm
                     ->relationship('form', 'name')
                     ->required(),
                 TextInput::make('version')
-                ->required()
-                ->numeric()
-                ->default(1)
-                ->unique('form_versions', 'version', ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, $get) {
-                    return $rule->where('form_id', $get('form_id'));
-                }),
+                    ->required()
+                    ->numeric()
+                    ->default(1)
+                    ->unique('form_versions', 'version', ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, $get) {
+                        return $rule->where('form_id', $get('form_id'));
+                    }),
+                TextInput::make('title_pattern')
+                    ->label(__('common.title_pattern'))
+                    ->helperText(__('Use field keys in braces, e.g., {first_name}-{last_name}'))
+                    ->placeholder('{field1}-{field2}')
+                    ->columnSpanFull(),
                 \Filament\Forms\Components\Builder::make('schema')
-                    ->label('Form Builder')
+                    ->label(__('Form Builder'))
                     ->blocks([
                         \Filament\Forms\Components\Builder\Block::make('text')
-                            ->label('Text Input')
+                            ->label(__('Text Input'))
                             ->icon('heroicon-m-bars-3-bottom-left')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
                                         TextInput::make('key')
                                             ->required()
-                                            ->label('Field Key')
-                                            ->helperText('Unique internal name (e.g., first_name)'),
+                                            ->label(__('Field Key'))
+                                            ->helperText(__('Unique internal name (e.g., first_name)')),
                                         TextInput::make('label.en')
                                             ->required()
-                                            ->label('Label (English)'),
+                                            ->label(__('Label (English)')),
                                         TextInput::make('label.fa')
                                             ->required()
-                                            ->label('Label (Persian)'),
+                                            ->label(__('Label (Persian)')),
                                     ]),
-                                Toggle::make('required'),
-                                TextInput::make('default_value'),
+                                Toggle::make('required')->label(__('Required')),
+                                TextInput::make('default_value')->label(__('Default Value')),
                             ]),
-                            
+
                         \Filament\Forms\Components\Builder\Block::make('textarea')
-                            ->label('Text Area')
+                            ->label(__('Text Area'))
                             ->icon('heroicon-m-document-text')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
-                                        Toggle::make('required'),
-                                        TextInput::make('rows')->numeric()->default(3),
+                                        Toggle::make('required')->label(__('Required')),
+                                        TextInput::make('rows')->numeric()->default(3)->label(__('Rows')),
                                     ]),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('number')
-                            ->label('Number')
+                            ->label(__('Number'))
                             ->icon('heroicon-m-calculator')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
-                                        TextInput::make('min_value')->numeric(),
-                                        TextInput::make('max_value')->numeric(),
+                                        TextInput::make('min_value')->numeric()->label(__('Min Value')),
+                                        TextInput::make('max_value')->numeric()->label(__('Max Value')),
                                     ]),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('email')
-                            ->label('Email')
+                            ->label(__('Email'))
                             ->icon('heroicon-m-envelope')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('date')
-                            ->label('Gregorian Date')
+                            ->label(__('Gregorian Date'))
                             ->icon('heroicon-m-calendar')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                \Filament\Schemas\Components\Grid::make(2)
+                                \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        Toggle::make('required'),
-                                        Toggle::make('include_time')->label('Include Time'),
+                                        Toggle::make('required')->label(__('Required')),
+                                        Toggle::make('include_time')->label(__('Include Time'))->live(),
+                                        Toggle::make('allow_reminder')
+                                            ->label(__('Allow Reminder'))
+                                            ->visible(fn ($get) => $get('include_time')),
                                     ]),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('solar_date')
-                            ->label('Solar Date (Jalali)')
+                            ->label(__('Solar Date (Jalali)'))
                             ->icon('heroicon-m-calendar-days')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                \Filament\Schemas\Components\Grid::make(2)
+                                \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        Toggle::make('required'),
-                                        Toggle::make('include_time')->label('Include Time'),
+                                        Toggle::make('required')->label(__('Required')),
+                                        Toggle::make('include_time')->label(__('Include Time'))->live(),
+                                        Toggle::make('allow_reminder')
+                                            ->label(__('Allow Reminder'))
+                                            ->visible(fn ($get) => $get('include_time')),
                                     ]),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('time')
-                            ->label('Time')
+                            ->label(__('Time'))
                             ->icon('heroicon-m-clock')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('select')
-                            ->label('Select Menu')
+                            ->label(__('Select Menu'))
                             ->icon('heroicon-m-list-bullet')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        Toggle::make('required'),
-                                        Toggle::make('multiple'),
-                                        Toggle::make('searchable'),
+                                        Toggle::make('required')->label(__('Required')),
+                                        Toggle::make('multiple')->label(__('Multiple')),
+                                        Toggle::make('searchable')->label(__('Searchable')),
                                     ]),
                                 \Filament\Forms\Components\KeyValue::make('options')
-                                    ->label('Options')
-                                    ->keyLabel('Value (Stored)')
-                                    ->valueLabel('Label (Displayed)')
-                                    ->addButtonLabel('Add Option'),
+                                    ->label(__('Options'))
+                                    ->keyLabel(__('Value (Stored)'))
+                                    ->valueLabel(__('Label (Displayed)'))
+                                    ->addButtonLabel(__('Add Option')),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('radio')
-                            ->label('Radio Buttons')
+                            ->label(__('Radio Buttons'))
                             ->icon('heroicon-m-stop-circle')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                                 \Filament\Forms\Components\KeyValue::make('options')
-                                    ->label('Options')
-                                    ->keyLabel('Value')
-                                    ->valueLabel('Label'),
+                                    ->label(__('Options'))
+                                    ->keyLabel(__('Value'))
+                                    ->valueLabel(__('Label')),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('checkbox')
-                            ->label('Checkbox')
+                            ->label(__('Checkbox'))
                             ->icon('heroicon-m-check-circle')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('switch')
-                            ->label('Switch / Toggle')
+                            ->label(__('Switch / Toggle'))
                             ->icon('heroicon-m-check')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('file')
-                            ->label('File Upload')
+                            ->label(__('File Upload'))
                             ->icon('heroicon-m-paper-clip')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
-                                        Toggle::make('required'),
-                                        Toggle::make('multiple'),
+                                        Toggle::make('required')->label(__('Required')),
+                                        Toggle::make('multiple')->label(__('Multiple')),
                                     ]),
                                 TextInput::make('max_size')
-                                    ->label('Max Size (KB)')
+                                    ->label(__('Max Size (KB)'))
                                     ->numeric()
                                     ->default(10240),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('image')
-                            ->label('Image Upload')
+                            ->label(__('Image Upload'))
                             ->icon('heroicon-m-photo')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
                                 \Filament\Schemas\Components\Grid::make(2)
                                     ->schema([
-                                        Toggle::make('required'),
-                                        Toggle::make('multiple'),
+                                        Toggle::make('required')->label(__('Required')),
+                                        Toggle::make('multiple')->label(__('Multiple')),
                                     ]),
                                 TextInput::make('max_size')
-                                    ->label('Max Size (KB)')
+                                    ->label(__('Max Size (KB)'))
                                     ->numeric()
                                     ->default(5120),
                             ]),
 
                         \Filament\Forms\Components\Builder\Block::make('rich_text')
-                            ->label('Rich Text Editor')
+                            ->label(__('Rich Text Editor'))
                             ->icon('heroicon-m-pencil-square')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                             ]),
-                            
+
                         \Filament\Forms\Components\Builder\Block::make('phone')
-                            ->label('Phone Number')
+                            ->label(__('Phone Number'))
                             ->icon('heroicon-m-phone')
                             ->schema([
                                 \Filament\Schemas\Components\Grid::make(3)
                                     ->schema([
-                                        TextInput::make('key')->required()->label('Field Key'),
-                                        TextInput::make('label.en')->required()->label('Label (En)'),
-                                        TextInput::make('label.fa')->required()->label('Label (Fa)'),
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
                                     ]),
-                                Toggle::make('required'),
+                                Toggle::make('required')->label(__('Required')),
                             ]),
                     ])
                     ->columnSpanFull()
@@ -283,13 +293,17 @@ class FormVersionForm
                     ->collapsible()
                     ->cloneable(),
                 Toggle::make('is_published')
+                    ->label(__('Published'))
                     ->required(),
                 Toggle::make('is_current')
+                    ->label(__('Current Version'))
                     ->required(),
                 TextInput::make('created_by')
+                    ->label(__('Created By'))
                     ->numeric()
                     ->default(null),
-                DateTimePicker::make('published_at'),
+                DateTimePicker::make('published_at')
+                    ->label(__('Published At')),
             ]);
     }
 }

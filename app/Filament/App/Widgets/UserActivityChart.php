@@ -5,11 +5,22 @@ namespace App\Filament\App\Widgets;
 use App\Models\ActivityLog;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UserActivityChart extends ChartWidget
 {
     protected ?string $heading = 'User Login Activity';
+
+    public static function canView(): bool
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return false;
+        }
+
+        $settings = $user->organization->settings ?? [];
+
+        return (bool) ($settings['widgets']['UserActivityChart'] ?? true);
+    }
 
     protected function getData(): array
     {
@@ -37,5 +48,19 @@ class UserActivityChart extends ChartWidget
     protected function getType(): string
     {
         return 'bar';
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'ticks' => [
+                        'stepSize' => 1,
+                        'precision' => 0,
+                    ],
+                ],
+            ],
+        ];
     }
 }

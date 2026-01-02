@@ -13,7 +13,7 @@ class UserForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->components([
+            ->schema([
                 Select::make('organization_id')
                     ->relationship('organization', 'name')
                     ->default(null),

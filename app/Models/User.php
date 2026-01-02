@@ -60,6 +60,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(AuditLog::class);
     }
 
+    public function sentMessages()
+    {
+        return $this->hasMany(PrivateChat::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(PrivateChat::class, 'recipient_id');
+    }
+
     // Helper methods
     public function isGeneralManager(): bool
     {

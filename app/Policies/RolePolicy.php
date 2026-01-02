@@ -12,8 +12,10 @@ class RolePolicy
      */
     public function viewAny(User $user): bool
     {
-        // GM can view all, org admin can view org roles
-        return $user->isGeneralManager() || $user->isOrgAdmin();
+        // GM can view all, org admin or user with permission
+        return $user->isGeneralManager() ||
+               $user->isOrgAdmin() ||
+               $user->hasPermission('roles.view');
     }
 
     /**
@@ -26,9 +28,13 @@ class RolePolicy
             return true;
         }
 
-        // Org admin can view roles in their org
-        return $user->isOrgAdmin() && 
-               $user->organization_id === $role->organization_id;
+        // Must belong to same organization
+        if ($user->organization_id !== $role->organization_id) {
+            return false;
+        }
+
+        // Org admin or user with permission
+        return $user->isOrgAdmin() || $user->hasPermission('roles.view');
     }
 
     /**
@@ -36,8 +42,10 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        // GM can create anywhere, org admin can create in their org
-        return $user->isGeneralManager() || $user->isOrgAdmin();
+        // GM can create anywhere, org admin or user with permission
+        return $user->isGeneralManager() ||
+               $user->isOrgAdmin() ||
+               $user->hasPermission('roles.create');
     }
 
     /**
@@ -45,7 +53,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        // Cannot update system roles
+        // Cannot update system roles unless GM
         if ($role->is_system) {
             return $user->isGeneralManager();
         }
@@ -55,9 +63,13 @@ class RolePolicy
             return true;
         }
 
-        // Org admin can update roles in their org
-        return $user->isOrgAdmin() && 
-               $user->organization_id === $role->organization_id;
+        // Must belong to same organization
+        if ($user->organization_id !== $role->organization_id) {
+            return false;
+        }
+
+        // Org admin or user with permission
+        return $user->isOrgAdmin() || $user->hasPermission('roles.edit');
     }
 
     /**
@@ -75,9 +87,13 @@ class RolePolicy
             return true;
         }
 
-        // Org admin can delete roles in their org
-        return $user->isOrgAdmin() && 
-               $user->organization_id === $role->organization_id;
+        // Must belong to same organization
+        if ($user->organization_id !== $role->organization_id) {
+            return false;
+        }
+
+        // Org admin or user with permission
+        return $user->isOrgAdmin() || $user->hasPermission('roles.delete');
     }
 
     /**

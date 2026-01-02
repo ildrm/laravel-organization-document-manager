@@ -13,15 +13,26 @@ use App\Models\AuditLog;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class AuditLogResource extends Resource
 {
     protected static ?string $model = AuditLog::class;
 
-    protected static ?string $modelLabel = 'گزارش حسابرسی';
-    protected static ?string $pluralModelLabel = 'گزارش‌های حسابرسی';
+    public static function getModelLabel(): string
+    {
+        return __('common.audit_log');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('common.audit_logs');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('common.audit_logs');
+    }
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-clock';
 

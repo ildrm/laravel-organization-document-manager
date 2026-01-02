@@ -10,6 +10,29 @@ use Illuminate\Support\Facades\Request;
 class DocumentObserver
 {
     /**
+     * Handle the Document "saving" event.
+     */
+    public function saving(Document $document): void
+    {
+        $version = $document->formVersion;
+        if ($version && $version->title_pattern) {
+            $pattern = $version->title_pattern;
+            $data = $document->data ?? [];
+            $title = $pattern;
+
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    $value = implode(', ', $value);
+                }
+                $title = str_replace('{'.$key.'}', (string) ($value ?? ''), $title);
+            }
+
+            $title = preg_replace('/--+/', '-', $title);
+            $document->title = trim($title, ' -');
+        }
+    }
+
+    /**
      * Handle the Document "created" event.
      */
     public function created(Document $document): void

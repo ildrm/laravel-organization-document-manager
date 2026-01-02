@@ -19,7 +19,7 @@ class FormVersionInfolist
                     ->numeric(),
                 TextEntry::make('schema')
                     ->columnSpanFull()
-                    ->formatStateUsing(fn ($state) => '```json' . PHP_EOL . json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL . '```')
+                    ->formatStateUsing(fn ($state) => '```json'.PHP_EOL.json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE).PHP_EOL.'```')
                     ->markdown(),
                 IconEntry::make('is_published')
                     ->boolean(),
