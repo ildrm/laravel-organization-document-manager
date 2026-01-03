@@ -2,7 +2,15 @@
     $conversations = ($type === 'private') ? $this->getConversations() : collect();
     $available = ($type === 'private') ? $this->getAvailableUsers() : collect();
     $organizationUsers = ($type === 'general') ? $this->getAllOrganizationUsers() : collect();
-    $messages = ($type === 'private') ? $this->getPrivateMessages() : $this->getGeneralMessages();
+    
+    if ($type === 'private') {
+        $messages = $this->getPrivateMessages();
+    } elseif ($type === 'support') {
+        $messages = $this->getSupportMessages();
+    } else {
+        $messages = $this->getGeneralMessages();
+    }
+    
     $recipient = ($type === 'private') ? $this->getRecipient() : null;
 @endphp
 
@@ -45,6 +53,13 @@
                     class="dark:{{ $type === 'general' ? 'bg-blue-900/30 text-blue-300' : 'text-gray-400 hover:text-gray-200' }}"
                 >
                     {{ __('common.general') }}
+                </button>
+                <button
+                    wire:click="switchToSupport"
+                    style="flex: 1; padding: 0.5rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; cursor: pointer; transition: all 0.3s; border: none; {{ $type === 'support' ? 'background-color: #e0f2fe; color: #0369a1;' : 'background-color: transparent; color: #4b5563;' }}"
+                    class="dark:{{ $type === 'support' ? 'bg-blue-900/30 text-blue-300' : 'text-gray-400 hover:text-gray-200' }}"
+                >
+                    {{ __('common.support') }}
                 </button>
             </div>
 
@@ -180,7 +195,7 @@
         {{-- MAIN CHAT AREA --}}
         <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
             
-            @if(($type === 'private' && $recipient_id) || $type === 'general')
+            @if(($type === 'private' && $recipient_id) || $type === 'general' || $type === 'support')
                 {{-- Chat Header --}}
                 <div style="padding: 0.75rem 1.5rem; border-bottom: 1px solid #e5e7eb; background-color: #ffffff; display: flex; align-items: center; justify-content: space-between;" class="dark:bg-gray-900 dark:border-gray-800">
                     <div style="display: flex; gap: 0.75rem; align-items: center;">
@@ -191,6 +206,11 @@
                             <div>
                                 <h2 style="font-size: 0.875rem; font-weight: 600; color: #111827;" class="dark:text-white">{{ $recipient->name }}</h2>
                                 <p style="font-size: 0.75rem; color: #6b7280;" class="dark:text-gray-400">Active now</p>
+                            </div>
+                        @elseif($type === 'support')
+                            <div>
+                                <h2 style="font-size: 0.875rem; font-weight: 600; color: #111827;" class="dark:text-white">{{ __('common.support_chat') }}</h2>
+                                <p style="font-size: 0.75rem; color: #6b7280;" class="dark:text-gray-400">{{ __('common.system_administrators') }}</p>
                             </div>
                         @else
                             <div>

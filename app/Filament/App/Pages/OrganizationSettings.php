@@ -20,6 +20,16 @@ class OrganizationSettings extends Page implements HasForms
 
     protected string $view = 'filament.app.pages.organization-settings';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('common.organization_settings');
+    }
+
+    public function getTitle(): string
+    {
+        return __('common.organization_settings');
+    }
+
     public ?array $data = [];
 
     public function mount(): void
@@ -31,22 +41,23 @@ class OrganizationSettings extends Page implements HasForms
     {
         return $form
             ->schema([
-                Section::make(__('Dashboard Widgets'))
-                    ->description(__('Choose which widgets are visible to users in your organization.'))
+                Section::make(__('common.dashboard_widgets'))
+                    ->description(__('common.dashboard_widgets_description'))
                     ->schema([
                         Toggle::make('widgets.AppStatsOverviewWidget')
-                            ->label(__('Stats Overview'))
+                            ->label(__('common.stats_overview'))
                             ->default(true),
                         Toggle::make('widgets.FileInteractionChart')
-                            ->label(__('File Interaction Chart'))
+                            ->label(__('common.file_interaction_chart'))
                             ->default(true),
                         Toggle::make('widgets.FileRegistrationChart')
-                            ->label(__('File Registration Chart'))
+                            ->label(__('common.file_registration_chart'))
                             ->default(true),
                         Toggle::make('widgets.UserActivityChart')
-                            ->label(__('User Activity Chart'))
+                            ->label(__('common.user_activity_chart'))
                             ->default(true),
-                    ]),
+                    ])
+                    ->columns(2),
             ])
             ->statePath('data');
     }
@@ -58,7 +69,7 @@ class OrganizationSettings extends Page implements HasForms
         $organization->save();
 
         Notification::make()
-            ->title(__('Settings saved successfully'))
+            ->title(__('common.settings_saved'))
             ->success()
             ->send();
     }

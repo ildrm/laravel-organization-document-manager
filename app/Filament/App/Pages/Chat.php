@@ -19,7 +19,7 @@ class Chat extends Page
     protected string $view = 'filament.app.pages.chat';
 
     #[Url]
-    public string $type = 'private'; // 'private' or 'general'
+    public string $type = 'private'; // 'private', 'general', or 'support'
 
     #[Url]
     public ?int $recipient_id = null;
@@ -35,15 +35,22 @@ class Chat extends Page
     }
 
     /**
-     * Get all users in the organization except the current user
+     * Get all users available for chat
      */
     public function getAvailableUsers(): Collection
     {
-        return User::where('organization_id', Auth::user()->organization_id)
-            ->where('id', '!=', Auth::id())
+        $user = Auth::user();
+        
+        return User::query()
+            ->where('id', '!=', $user->id)
+            ->when(!$user->isGeneralManager(), function ($query) use ($user) {
+                $query->where('organization_id', $user->organization_id);
+            })
             ->when($this->searchQuery, function ($query) {
-                $query->where('name', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->searchQuery . '%')
+                        ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
+                });
             })
             ->orderBy('name')
             ->get();
@@ -54,11 +61,18 @@ class Chat extends Page
      */
     public function getAllOrganizationUsers(): Collection
     {
-        return User::where('organization_id', Auth::user()->organization_id)
-            ->where('id', '!=', Auth::id())
+        $user = Auth::user();
+        
+        // General chat is always within an organization. 
+        // If GM is viewing general chat, they see the current org members if they are bound to one.
+        // Usually GM shouldn't be in a "general" chat unless they have an org.
+        return User::where('organization_id', $user->organization_id)
+            ->where('id', '!=', $user->id)
             ->when($this->searchQuery, function ($query) {
-                $query->where('name', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->searchQuery . '%')
+                        ->orWhere('email', 'like', '%' . $this->searchQuery . '%');
+                });
             })
             ->orderBy('name')
             ->get();
@@ -69,26 +83,39 @@ class Chat extends Page
      */
     public function getConversations(): Collection
     {
-        return User::where('organization_id', Auth::user()->organization_id)
-            ->where('id', '!=', Auth::id())
-            ->whereHas('sentMessages', function ($query) {
-                $query->where('sender_id', Auth::id())
-                    ->orWhere('recipient_id', Auth::id());
-            }, '>')
+        $user = Auth::user();
+        $authId = $user->id;
+        $isGM = $user->isGeneralManager();
+
+        return User::query()
+            ->where('id', '!=', $authId)
+            ->when(!$isGM, function ($query) use ($user) {
+                $query->where('organization_id', $user->organization_id);
+            })
+            ->where(function ($query) use ($authId) {
+                $query->whereHas('sentMessages', function ($q) use ($authId) {
+                    $q->where('recipient_id', $authId);
+                })->orWhereHas('receivedMessages', function ($q) use ($authId) {
+                    $q->where('sender_id', $authId);
+                });
+            })
             ->with([
-                'sentMessages' => function ($query) {
-                    $query->where('organization_id', Auth::user()->organization_id)
-                        ->where(function ($q) {
-                            $q->where('sender_id', Auth::id())
-                                ->orWhere('recipient_id', Auth::id());
-                        })
+                'sentMessages' => function ($query) use ($authId) {
+                    $query->where('recipient_id', $authId)
+                        ->latest()
+                        ->limit(1);
+                },
+                'receivedMessages' => function ($query) use ($authId) {
+                    $query->where('sender_id', $authId)
                         ->latest()
                         ->limit(1);
                 }
             ])
             ->get()
             ->sortByDesc(function ($user) {
-                return $user->sentMessages->first()?->created_at;
+                $lastSent = $user->sentMessages->first()?->created_at;
+                $lastReceived = $user->receivedMessages->first()?->created_at;
+                return max($lastSent, $lastReceived);
             });
     }
 
@@ -101,7 +128,7 @@ class Chat extends Page
             return collect();
         }
 
-        return PrivateChat::where('organization_id', Auth::user()->organization_id)
+        return PrivateChat::query()
             ->where(function ($query) {
                 $query->where('sender_id', Auth::id())
                     ->where('recipient_id', $this->recipient_id)
@@ -143,9 +170,6 @@ class Chat extends Page
         return User::find($this->recipient_id);
     }
 
-    /**
-     * Send a private message
-     */
     public function sendPrivateMessage(): void
     {
         if (!Auth::user()->hasPermission('chat.send')) {
@@ -162,8 +186,14 @@ class Chat extends Page
             'message' => 'required|string|max:1000',
         ]);
 
+        $recipient = User::find($this->recipient_id);
+        if (!$recipient) {
+            $this->addError('message', 'Recipient not found.');
+            return;
+        }
+
         PrivateChat::create([
-            'organization_id' => Auth::user()->organization_id,
+            'organization_id' => $recipient->organization_id ?? Auth::user()->organization_id,
             'sender_id' => Auth::id(),
             'recipient_id' => $this->recipient_id,
             'message' => $this->message,
@@ -173,13 +203,16 @@ class Chat extends Page
         $this->dispatch('messageSent');
     }
 
-    /**
-     * Send a general message
-     */
     public function sendGeneralMessage(): void
     {
         if (!Auth::user()->hasPermission('chat.send')) {
             $this->addError('message', __('common.no_permission'));
+            return;
+        }
+
+        $user = Auth::user();
+        if (!$user->organization_id) {
+            $this->addError('message', 'You must belong to an organization to send general messages.');
             return;
         }
 
@@ -188,10 +221,60 @@ class Chat extends Page
         ]);
 
         ChatMessage::create([
-            'organization_id' => Auth::user()->organization_id,
-            'user_id' => Auth::id(),
+            'organization_id' => $user->organization_id,
+            'user_id' => $user->id,
             'message' => $this->message,
             'is_support' => false,
+        ]);
+
+        $this->message = '';
+        $this->dispatch('messageSent');
+    }
+
+    /**
+     * Get support messages for the organization
+     */
+    public function getSupportMessages(): Collection
+    {
+        $user = Auth::user();
+        if (!$user->organization_id) {
+            return collect();
+        }
+
+        return ChatMessage::where('organization_id', $user->organization_id)
+            ->where('is_support', true)
+            ->with('user')
+            ->latest()
+            ->take(50)
+            ->get()
+            ->reverse();
+    }
+
+    /**
+     * Send a support message
+     */
+    public function sendSupportMessage(): void
+    {
+        if (!Auth::user()->hasPermission('chat.send')) {
+            $this->addError('message', __('common.no_permission'));
+            return;
+        }
+
+        $user = Auth::user();
+        if (!$user->organization_id) {
+            $this->addError('message', 'You must belong to an organization to contact support.');
+            return;
+        }
+
+        $this->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
+        ChatMessage::create([
+            'organization_id' => $user->organization_id,
+            'user_id' => $user->id,
+            'message' => $this->message,
+            'is_support' => true,
         ]);
 
         $this->message = '';
@@ -205,6 +288,8 @@ class Chat extends Page
     {
         if ($this->type === 'private') {
             $this->sendPrivateMessage();
+        } elseif ($this->type === 'support') {
+            $this->sendSupportMessage();
         } else {
             $this->sendGeneralMessage();
         }
@@ -220,6 +305,14 @@ class Chat extends Page
     public function switchToGeneral(): void
     {
         $this->type = 'general';
+        $this->recipient_id = null;
+        $this->searchQuery = '';
+        $this->message = '';
+    }
+
+    public function switchToSupport(): void
+    {
+        $this->type = 'support';
         $this->recipient_id = null;
         $this->searchQuery = '';
         $this->message = '';

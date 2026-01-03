@@ -27,14 +27,7 @@ class ProcessReminders extends Command
 
         foreach ($reminders as $reminder) {
             try {
-                $emails = array_filter(explode(',', $reminder->email_to));
-                
-                // Add creator's email if available
-                if ($reminder->document->creator) {
-                    $emails[] = $reminder->document->creator->email;
-                }
-
-                $emails = array_unique($emails);
+                $emails = $reminder->getRecipientEmails();
 
                 if (!empty($emails)) {
                     Mail::to($emails)->send(new DocumentReminderMail($reminder));

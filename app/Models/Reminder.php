@@ -40,4 +40,20 @@ class Reminder extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    /**
+     * Get all recipient emails for this reminder
+     *
+     * @return array<string>
+     */
+    public function getRecipientEmails(): array
+    {
+        $emails = array_filter(explode(',', $this->email_to ?? ''));
+
+        if ($this->document?->creator) {
+            $emails[] = $this->document->creator->email;
+        }
+
+        return array_unique(array_map('trim', $emails));
+    }
 }

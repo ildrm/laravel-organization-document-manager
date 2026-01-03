@@ -48,6 +48,14 @@ class Form extends Model
         return $this->hasMany(FormVersion::class)->where('is_published', true);
     }
 
+    public function latestPublishedVersion()
+    {
+        return $this->hasOne(FormVersion::class)
+            ->where('is_published', true)
+            ->orderByDesc('version')
+            ->latest();
+    }
+
     public function documents()
     {
         return $this->hasMany(Document::class);

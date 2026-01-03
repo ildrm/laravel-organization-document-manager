@@ -60,4 +60,14 @@ class Organization extends Model
     {
         return $this->hasMany(User::class)->where('is_org_admin', true);
     }
+
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
+    public function privateChats()
+    {
+        return $this->hasMany(PrivateChat::class);
+    }
 }
