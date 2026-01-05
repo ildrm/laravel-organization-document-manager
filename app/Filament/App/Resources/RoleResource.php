@@ -73,11 +73,13 @@ class RoleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('common.name'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('description'),
+                Tables\Columns\TextColumn::make('description')
+                    ->label(__('Description')),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts('users')
-                    ->label('Users'),
+                    ->label(__('common.users')),
             ])
             ->filters([
                 //

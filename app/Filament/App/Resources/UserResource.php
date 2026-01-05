@@ -76,14 +76,19 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('common.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('common.email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('roles.name')
+                    ->label(__('common.roles'))
                     ->badge(),
                 Tables\Columns\IconColumn::make('is_org_admin')
+                    ->label(__('Organization Admin'))
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('common.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -15,6 +15,8 @@ use App\Policies\UserPolicy;
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
+use App\Filament\Widgets\PersianCalendarWidget;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -54,5 +56,7 @@ class AppServiceProvider extends ServiceProvider
             $switch
                 ->locales(['en', 'fa']);
         });
+
+        Livewire::component('app.filament.widgets.persian-calendar-widget', PersianCalendarWidget::class);
     }
 }

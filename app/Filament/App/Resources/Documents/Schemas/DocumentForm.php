@@ -13,8 +13,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TagsInput;
 use Filament\Schemas\Schema;
-use Filament\Forms\Get;
+use Filament\Forms\Get as FormsGet;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get as SchemasGet;
 use Illuminate\Support\Facades\Auth;
 
 class DocumentForm
@@ -125,7 +126,7 @@ class DocumentForm
 
                 Section::make(__('Reminders'))
                     ->description(__('Set up email reminders for date fields.'))
-                    ->schema(function (Get $get) {
+                    ->schema(function (SchemasGet $get) {
                         $version = static::getLatestVersion($get('form_id'));
                         $reminderFields = static::getReminderFields($version);
 
@@ -148,13 +149,13 @@ class DocumentForm
                                         ->label(__('Additional Emails'))
                                         ->placeholder(__('Add email address...'))
                                         ->helperText(__('A reminder will be sent to your email and these addresses.'))
-                                        ->visible(fn (Get $get) => $get("reminders.{$key}.enabled")),
+                                        ->visible(fn (SchemasGet $get) => $get("reminders.{$key}.enabled")),
                                 ]);
                         }
 
                         return $components;
                     })
-                    ->visible(function (Get $get) {
+                    ->visible(function (SchemasGet $get) {
                         $version = static::getLatestVersion($get('form_id'));
                         return ! empty(static::getReminderFields($version));
                     }),

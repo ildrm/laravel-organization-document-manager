@@ -22,7 +22,6 @@ class Document extends Model
         'files',
         'status',
         'notes',
-        'reminders', // Temporary field for form handling
     ];
 
     protected function casts(): array

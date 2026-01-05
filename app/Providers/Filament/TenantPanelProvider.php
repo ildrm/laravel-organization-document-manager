@@ -18,6 +18,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+
 class TenantPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -29,6 +31,12 @@ class TenantPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
+            ->plugins([
+                FilamentFullCalendarPlugin::make()
+                    ->schedulerLicenseKey('GPL-My-Project-Is-Open-Source')
+                    ->selectable()
+                    ->editable(),
+            ])
             ->resources([
                 \App\Filament\App\Resources\DocumentResource::class,
             ])
@@ -38,8 +46,10 @@ class TenantPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 AccountWidget::class,
+                \App\Filament\Widgets\PersianCalendarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
