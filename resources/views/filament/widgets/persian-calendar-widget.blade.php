@@ -1,5 +1,5 @@
 <div wire:ignore>
-    <div id="persian-calendar-instance" style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" class="dark:bg-gray-900"></div>
+    <!-- <div id="persian-calendar-instance" style="background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" class="dark:bg-gray-900"></div> -->
     
     <link href="https://cdn.jsdelivr.net/gh/samanrashidii/persian-fullcalendar@master/css/fullcalendar.min.css" rel="stylesheet" />
     <style>

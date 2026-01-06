@@ -6,41 +6,6 @@
 
 <x-filament-panels::page>
     <div style="padding: 1.5rem;">
-        {{-- Header with Controls --}}
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-            <div>
-                <h1 style="font-size: 1.875rem; font-weight: bold; color: #111827;" class="dark:text-white">
-                    {{ __('common.reminders_calendar') }}
-                </h1>
-                <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem;" class="dark:text-gray-400">
-                    {{ __('View and manage all reminders') }}
-                </p>
-            </div>
-            
-            {{-- Calendar Type Toggle --}}
-            <div style="display: flex; align-items: center; gap: 1rem; background-color: #f3f4f6; padding: 0.75rem 1.5rem; border-radius: 0.5rem;" class="dark:bg-gray-800">
-                <span style="font-size: 0.875rem; font-weight: 500; color: #374151;" class="dark:text-gray-300">
-                    {{ __('Calendar Type:') }}
-                </span>
-                <div style="display: flex; background-color: white; border-radius: 0.375rem; border: 1px solid #d1d5db;" class="dark:bg-gray-700 dark:border-gray-600">
-                    <button
-                        wire:click="$set('calendarType', 'gregorian')"
-                        style="padding: 0.5rem 1rem; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s; {{ $this->calendarType === 'gregorian' ? 'background-color: #3b82f6; color: white;' : 'background-color: transparent; color: #374151;' }}"
-                        class="dark:{{ $this->calendarType === 'gregorian' ? 'bg-blue-600 text-white' : 'text-gray-300' }}"
-                    >
-                        {{ __('Gregorian') }}
-                    </button>
-                    <button
-                        wire:click="$set('calendarType', 'persian')"
-                        style="padding: 0.5rem 1rem; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s; border-left: 1px solid #d1d5db; {{ $this->calendarType === 'persian' ? 'background-color: #3b82f6; color: white;' : 'background-color: transparent; color: #374151;' }}"
-                        class="dark:border-gray-600 dark:{{ $this->calendarType === 'persian' ? 'bg-blue-600 text-white' : 'text-gray-300' }}"
-                    >
-                        {{ __('Persian') }}
-                    </button>
-                </div>
-            </div>
-        </div>
-
         {{-- Calendar Grid --}}
         <div style="background-color: white; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);" class="dark:bg-gray-900">
             {{-- Summary --}}
@@ -124,6 +89,41 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+        
+        {{-- Header with Controls --}}
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 style="font-size: 1.875rem; font-weight: bold; color: #111827;" class="dark:text-white">
+                    {{ __('common.reminders_calendar') }}
+                </h1>
+                <p style="color: #6b7280; font-size: 0.875rem; margin-top: 0.25rem;" class="dark:text-gray-400">
+                    {{ __('View and manage all reminders') }}
+                </p>
+            </div>
+            
+            {{-- Calendar Type Toggle --}}
+            <div style="display: flex; align-items: center; gap: 1rem; background-color: #f3f4f6; padding: 0.75rem 1.5rem; border-radius: 0.5rem;" class="dark:bg-gray-800">
+                <span style="font-size: 0.875rem; font-weight: 500; color: #374151;" class="dark:text-gray-300">
+                    {{ __('Calendar Type:') }}
+                </span>
+                <div style="display: flex; background-color: white; border-radius: 0.375rem; border: 1px solid #d1d5db;" class="dark:bg-gray-700 dark:border-gray-600">
+                    <button
+                        wire:click="$set('calendarType', 'gregorian')"
+                        style="padding: 0.5rem 1rem; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s; {{ $this->calendarType === 'gregorian' ? 'background-color: #3b82f6; color: white;' : 'background-color: transparent; color: #374151;' }}"
+                        class="dark:{{ $this->calendarType === 'gregorian' ? 'bg-blue-600 text-white' : 'text-gray-300' }}"
+                    >
+                        {{ __('Gregorian') }}
+                    </button>
+                    <button
+                        wire:click="$set('calendarType', 'persian')"
+                        style="padding: 0.5rem 1rem; font-size: 0.875rem; border: none; cursor: pointer; transition: all 0.2s; border-left: 1px solid #d1d5db; {{ $this->calendarType === 'persian' ? 'background-color: #3b82f6; color: white;' : 'background-color: transparent; color: #374151;' }}"
+                        class="dark:border-gray-600 dark:{{ $this->calendarType === 'persian' ? 'bg-blue-600 text-white' : 'text-gray-300' }}"
+                    >
+                        {{ __('Persian') }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
