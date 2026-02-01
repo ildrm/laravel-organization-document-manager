@@ -39,6 +39,15 @@ class RoleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Roles & Access';
+
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Roles & Access');
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('organization_id', Auth::user()->organization_id);
@@ -74,9 +83,11 @@ class RoleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('common.name'))
+                    ->formatStateUsing(fn (?string $state): ?string => $state ? __($state) : $state)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
-                    ->label(__('Description')),
+                    ->label(__('Description'))
+                    ->formatStateUsing(fn (?string $state): ?string => $state ? __($state) : $state),
                 Tables\Columns\TextColumn::make('users_count')
                     ->counts('users')
                     ->label(__('common.users')),

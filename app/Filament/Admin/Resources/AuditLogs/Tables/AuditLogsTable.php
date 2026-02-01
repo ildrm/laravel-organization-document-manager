@@ -16,23 +16,31 @@ class AuditLogsTable
         return $table
             ->columns([
                 TextColumn::make('user.name')
+                    ->label(__('common.user'))
                     ->searchable(),
                 TextColumn::make('organization.name')
+                    ->label(__('common.organization'))
                     ->searchable(),
                 TextColumn::make('action')
+                    ->label(__('Action'))
                     ->searchable(),
                 TextColumn::make('model_type')
+                    ->label(__('Model type'))
                     ->searchable(),
                 TextColumn::make('model_id')
+                    ->label(__('Model ID'))
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('ip_address')
+                    ->label(__('IP address'))
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label(__('common.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label(__('common.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

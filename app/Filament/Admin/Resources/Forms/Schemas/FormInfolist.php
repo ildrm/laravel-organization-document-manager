@@ -20,8 +20,8 @@ class FormInfolist
                     ->columnSpanFull(),
                 IconEntry::make('is_active')
                     ->boolean(),
-                TextEntry::make('created_by')
-                    ->numeric()
+                TextEntry::make('creator.name')
+                    ->label(__('common.created_by'))
                     ->placeholder('-'),
                 TextEntry::make('created_at')
                     ->dateTime()

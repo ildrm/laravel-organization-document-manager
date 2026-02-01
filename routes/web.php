@@ -13,4 +13,10 @@ Route::middleware('auth')->group(function () {
         ->name('documents.files.download');
     Route::get('/documents/{document}/files/{fileKey}/view', [FileDownloadController::class, 'view'])
         ->name('documents.files.view');
+
+    // Reports: export documents as CSV (Excel-compatible) - tenant panel users only
+    Route::middleware(\App\Http\Middleware\EnsureTenantAccess::class)->group(function () {
+        Route::get('/app/export-documents', \App\Http\Controllers\DocumentsExportController::class)
+            ->name('app.documents.export');
+    });
 });

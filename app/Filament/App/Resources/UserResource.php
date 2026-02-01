@@ -38,6 +38,15 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Roles & Access';
+
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Roles & Access');
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->where('organization_id', Auth::user()->organization_id);
@@ -62,6 +71,7 @@ class UserResource extends Resource
                     ->relationship('roles', 'name', function (Builder $query) {
                         return $query->where('organization_id', Auth::user()->organization_id);
                     })
+                    ->getOptionLabelFromRecordUsing(fn ($record) => __($record->name))
                     ->preload()
                     ->multiple(),
                 Forms\Components\Toggle::make('is_org_admin')

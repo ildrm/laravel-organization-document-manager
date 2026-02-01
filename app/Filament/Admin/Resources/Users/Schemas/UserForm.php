@@ -16,19 +16,25 @@ class UserForm
             ->schema([
                 Select::make('organization_id')
                     ->relationship('organization', 'name')
+                    ->label(__('common.organization'))
                     ->default(null),
                 TextInput::make('name')
+                    ->label(__('common.name'))
                     ->required(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label(__('common.email'))
                     ->email()
                     ->required(),
-                DateTimePicker::make('email_verified_at'),
+                DateTimePicker::make('email_verified_at')
+                    ->label(__('Email verified at')),
                 Toggle::make('is_general_manager')
+                    ->label(__('General manager'))
                     ->required(),
                 Toggle::make('is_org_admin')
+                    ->label(__('Organization Admin'))
                     ->required(),
                 TextInput::make('language_preference')
+                    ->label(__('Language'))
                     ->required()
                     ->default('en'),
                 TextInput::make('password')

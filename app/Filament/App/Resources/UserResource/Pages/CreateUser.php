@@ -16,4 +16,10 @@ class CreateUser extends CreateRecord
 
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        $roleIds = $this->form->getState()['roles'] ?? [];
+        $this->record->roles()->sync($roleIds);
+    }
 }

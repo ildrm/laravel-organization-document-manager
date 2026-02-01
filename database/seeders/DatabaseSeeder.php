@@ -10,14 +10,23 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * Order: Permissions → Default Organization (if none) → Roles (with permission_role) → Test User
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            PermissionSeeder::class,
+            DefaultOrganizationSeeder::class,
+            RoleSeeder::class,
         ]);
+
+        // Optional: create a test user (assign to default org and a role if desired)
+        if (User::count() === 0) {
+            User::factory()->create([
+                'name' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        }
     }
 }

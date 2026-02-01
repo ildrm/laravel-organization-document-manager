@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Forms\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -22,8 +23,11 @@ class FormForm
                     ->columnSpanFull(),
                 Toggle::make('is_active')
                     ->required(),
-                TextInput::make('created_by')
-                    ->numeric()
+                Select::make('created_by')
+                    ->label(__('common.created_by'))
+                    ->relationship('creator', 'name')
+                    ->searchable()
+                    ->preload()
                     ->default(null),
             ]);
     }

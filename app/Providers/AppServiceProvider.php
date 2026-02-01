@@ -5,11 +5,13 @@ namespace App\Providers;
 use App\Models\Document;
 use App\Models\Form;
 use App\Models\Organization;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Policies\DocumentPolicy;
 use App\Policies\FormPolicy;
 use App\Policies\OrganizationPolicy;
+use App\Policies\PermissionPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         Organization::class => OrganizationPolicy::class,
         Document::class => DocumentPolicy::class,
         Form::class => FormPolicy::class,
+        Permission::class => PermissionPolicy::class,
         User::class => UserPolicy::class,
         Role::class => RolePolicy::class,
     ];

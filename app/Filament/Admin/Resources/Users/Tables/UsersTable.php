@@ -17,26 +17,34 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('organization.name')
+                    ->label(__('common.organization'))
                     ->searchable(),
                 TextColumn::make('name')
+                    ->label(__('common.name'))
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label(__('common.email'))
                     ->searchable(),
                 TextColumn::make('email_verified_at')
+                    ->label(__('Email verified at'))
                     ->dateTime()
                     ->sortable(),
                 IconColumn::make('is_general_manager')
+                    ->label(__('General manager'))
                     ->boolean(),
                 IconColumn::make('is_org_admin')
+                    ->label(__('Organization Admin'))
                     ->boolean(),
                 TextColumn::make('language_preference')
+                    ->label(__('Language'))
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label(__('common.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label(__('common.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

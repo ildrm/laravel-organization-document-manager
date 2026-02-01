@@ -25,8 +25,8 @@ class FormVersionInfolist
                     ->boolean(),
                 IconEntry::make('is_current')
                     ->boolean(),
-                TextEntry::make('created_by')
-                    ->numeric()
+                TextEntry::make('creator.name')
+                    ->label(__('common.created_by'))
                     ->placeholder('-'),
                 TextEntry::make('published_at')
                     ->dateTime()

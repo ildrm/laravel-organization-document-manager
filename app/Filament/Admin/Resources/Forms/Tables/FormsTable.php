@@ -20,23 +20,29 @@ class FormsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('common.name'))
                     ->searchable(),
                 TextColumn::make('slug')
+                    ->label(__('Slug'))
                     ->searchable(),
                 IconColumn::make('is_active')
+                    ->label(__('common.active'))
                     ->boolean(),
-                TextColumn::make('created_by')
-                    ->numeric()
+                TextColumn::make('creator.name')
+                    ->label(__('common.created_by'))
                     ->sortable(),
                 TextColumn::make('created_at')
+                    ->label(__('common.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label(__('common.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
+                    ->label(__('Deleted at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

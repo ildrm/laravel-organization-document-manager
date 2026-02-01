@@ -97,9 +97,11 @@ class FormSchemaService
     }
 
     /**
-     * Compile schema to Filament form components (for create/edit)
+     * Compile schema to Filament form components (for create/edit).
+     *
+     * @param  string  $keyPrefix  Prefix for component names (e.g. 'data.' so state is data.field_key). Use '' for flat keys under a Section with statePath('data').
      */
-    public function compileToFilamentComponents(array $schema, string $locale = 'en'): array
+    public function compileToFilamentComponents(array $schema, string $locale = 'en', string $keyPrefix = 'data.'): array
     {
         $components = [];
 
@@ -111,10 +113,10 @@ class FormSchemaService
             $key = $data['key'];
             $required = $data['required'] ?? false;
 
-            $component = $this->createFilamentComponent($type, $data, $label, $required, $locale);
+            $component = $this->createFilamentComponent($type, $data, $label, $required, $locale, $keyPrefix);
 
             if ($component) {
-                $components[$key] = $component;
+                $components[$keyPrefix ? $keyPrefix.$key : $key] = $component;
             }
         }
 
@@ -124,9 +126,9 @@ class FormSchemaService
     /**
      * Create a Filament form component from field definition
      */
-    protected function createFilamentComponent(string $type, array $data, string $label, bool $required, string $locale): mixed
+    protected function createFilamentComponent(string $type, array $data, string $label, bool $required, string $locale, string $keyPrefix = ''): mixed
     {
-        $key = $data['key'];
+        $key = $keyPrefix ? $keyPrefix.$data['key'] : $data['key'];
 
         switch ($type) {
             case 'text':
@@ -158,18 +160,29 @@ class FormSchemaService
                 break;
 
             case 'date':
+                $dateFormat = $data['date_format'] ?? 'Y-m-d';
                 if ($data['include_time'] ?? false) {
                     $component = \Filament\Forms\Components\DateTimePicker::make($key)
-                        ->displayFormat('Y-m-d H:i');
+                        ->displayFormat($dateFormat.' H:i')
+                        ->seconds(true);
                 } else {
                     $component = \Filament\Forms\Components\DatePicker::make($key)
-                        ->displayFormat('Y-m-d');
+                        ->displayFormat($dateFormat);
                 }
                 break;
 
             case 'solar_date':
-                $component = \Filament\Forms\Components\DatePicker::make($key)
-                    ->jalali();
+                $dateFormat = $data['date_format'] ?? 'Y/m/d';
+                if ($data['include_time'] ?? false) {
+                    $component = \Filament\Forms\Components\DateTimePicker::make($key)
+                        ->jalali()
+                        ->displayFormat($dateFormat.' H:i')
+                        ->seconds(true);
+                } else {
+                    $component = \Filament\Forms\Components\DatePicker::make($key)
+                        ->jalali()
+                        ->displayFormat($dateFormat);
+                }
                 break;
 
             case 'time':
@@ -229,7 +242,7 @@ class FormSchemaService
         }
 
         if (isset($component)) {
-            $component->label($label)->required($required)->live(onBlur: true);
+            $component->label($label)->required($required)->live(onBlur: true)->dehydrated(true);
 
             return $component;
         }

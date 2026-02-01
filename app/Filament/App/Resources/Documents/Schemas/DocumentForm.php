@@ -54,10 +54,20 @@ class DocumentForm
                             })
                             ->required()
                             ->live()
-                            ->afterStateUpdated(function ($set) {
+                            ->afterStateUpdated(function ($set, $get) {
                                 $set('form_version_id', null);
-                                $set('data', []);
                                 $set('title', '');
+                                $version = static::getLatestVersion($get('form_id'));
+                                $data = [];
+                                if ($version && ! empty($version->schema)) {
+                                    foreach ($version->schema as $block) {
+                                        $key = $block['data']['key'] ?? null;
+                                        if ($key) {
+                                            $data[$key] = null;
+                                        }
+                                    }
+                                }
+                                $set('data', $data);
                             }),
 
                         Hidden::make('form_version_id')
@@ -111,9 +121,9 @@ class DocumentForm
                         }
 
                         $service = app(FormSchemaService::class);
-                        return $service->compileToFilamentComponents($version->schema, app()->getLocale());
+                        // Use 'data.' prefix so components bind to state['data'][key] without Section statePath (fixes jalali/date binding)
+                        return $service->compileToFilamentComponents($version->schema, app()->getLocale(), 'data.');
                     })
-                    ->statePath('data')
                     ->visible(fn ($get) => $get('form_id')),
 
                 Section::make(__('Attachments'))

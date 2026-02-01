@@ -24,4 +24,10 @@ class CreateRole extends CreateRecord
 
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        $permissionIds = $this->form->getState()['permissions'] ?? [];
+        $this->record->permissions()->sync($permissionIds);
+    }
 }

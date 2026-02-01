@@ -115,6 +115,16 @@ class FormVersionForm
                                     ->schema([
                                         Toggle::make('required')->label(__('Required')),
                                         Toggle::make('include_time')->label(__('Include Time'))->live(),
+                                        Select::make('date_format')
+                                            ->label(__('Date Format'))
+                                            ->options([
+                                                'Y-m-d' => 'YYYY-MM-DD',
+                                                'd/m/Y' => 'DD/MM/YYYY',
+                                                'm/d/Y' => 'MM/DD/YYYY',
+                                                'd.m.Y' => 'DD.MM.YYYY',
+                                            ])
+                                            ->default('Y-m-d')
+                                            ->native(false),
                                         Toggle::make('allow_reminder')
                                             ->label(__('Allow Reminder'))
                                             ->visible(fn ($get) => $get('include_time')),
@@ -135,6 +145,15 @@ class FormVersionForm
                                     ->schema([
                                         Toggle::make('required')->label(__('Required')),
                                         Toggle::make('include_time')->label(__('Include Time'))->live(),
+                                        Select::make('date_format')
+                                            ->label(__('Date Format'))
+                                            ->options([
+                                                'Y/m/d' => 'YYYY/MM/DD',
+                                                'Y-m-d' => 'YYYY-MM-DD',
+                                                'd/m/Y' => 'DD/MM/YYYY',
+                                            ])
+                                            ->default('Y/m/d')
+                                            ->native(false),
                                         Toggle::make('allow_reminder')
                                             ->label(__('Allow Reminder'))
                                             ->visible(fn ($get) => $get('include_time')),
@@ -298,10 +317,12 @@ class FormVersionForm
                 Toggle::make('is_current')
                     ->label(__('Current Version'))
                     ->required(),
-                TextInput::make('created_by')
-                    ->label(__('Created By'))
-                    ->numeric()
-                    ->default(null),
+                Select::make('created_by')
+                    ->label(__('common.created_by'))
+                    ->relationship('creator', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
                 DateTimePicker::make('published_at')
                     ->label(__('Published At')),
             ]);

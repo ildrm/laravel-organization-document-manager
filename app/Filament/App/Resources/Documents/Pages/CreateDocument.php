@@ -3,6 +3,7 @@
 namespace App\Filament\App\Resources\Documents\Pages;
 
 use App\Filament\App\Resources\DocumentResource;
+use App\Models\FormVersion;
 use App\Models\Reminder;
 use Carbon\Carbon;
 use Filament\Resources\Pages\CreateRecord;
@@ -16,6 +17,18 @@ class CreateDocument extends CreateRecord
     {
         $data['organization_id'] = auth()->user()->organization_id;
         $data['created_by'] = auth()->id();
+
+        // Ensure form_version_id is set when form_id is present (e.g. when Hidden default did not run)
+        if (empty($data['form_version_id']) && ! empty($data['form_id'])) {
+            $version = FormVersion::where('form_id', $data['form_id'])
+                ->where('is_published', true)
+                ->orderByDesc('version')
+                ->first();
+            $data['form_version_id'] = $version?->id;
+        }
+
+        // Ensure data is always an array (Section with statePath('data') may not be present in state initially)
+        $data['data'] = $data['data'] ?? [];
 
         return $data;
     }
