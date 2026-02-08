@@ -306,6 +306,58 @@ class FormVersionForm
                                     ]),
                                 Toggle::make('required')->label(__('Required')),
                             ]),
+
+                        \Filament\Forms\Components\Builder\Block::make('unit')
+                            ->label(__('Unit Field'))
+                            ->icon('heroicon-m-scale')
+                            ->schema([
+                                \Filament\Schemas\Components\Grid::make(3)
+                                    ->schema([
+                                        TextInput::make('key')->required()->label(__('Field Key')),
+                                        TextInput::make('label.en')->required()->label(__('Label (En)')),
+                                        TextInput::make('label.fa')->required()->label(__('Label (Fa)')),
+                                    ]),
+                                Select::make('unit_type')
+                                    ->label(__('Unit Type'))
+                                    ->options([
+                                        'weight' => __('Weight'),
+                                        'money' => __('Money / Currency'),
+                                        'distance' => __('Distance'),
+                                        'volume' => __('Volume'),
+                                        'area' => __('Area'),
+                                        'energy' => __('Energy'),
+                                        'power' => __('Power'),
+                                    ])
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(fn ($set) => $set('unit', null)),
+                                Select::make('unit')
+                                    ->label(__('Unit'))
+                                    ->options(function ($get) {
+                                        $unitType = $get('unit_type');
+                                        if (! $unitType) {
+                                            return [];
+                                        }
+
+                                        $config = new \App\Config\UnitConfig();
+
+                                        return $config->getUnitsForType($unitType, app()->getLocale());
+                                    })
+                                    ->required()
+                                    ->searchable()
+                                    ->visible(fn ($get) => filled($get('unit_type'))),
+                                \Filament\Schemas\Components\Grid::make(2)
+                                    ->schema([
+                                        Toggle::make('required')->label(__('Required')),
+                                        TextInput::make('decimal_places')
+                                            ->label(__('Decimal Places'))
+                                            ->numeric()
+                                            ->default(2)
+                                            ->minValue(0)
+                                            ->maxValue(10),
+                                    ]),
+                            ]),
+
                     ])
                     ->columnSpanFull()
                     ->reorderableWithButtons()

@@ -88,6 +88,13 @@ class FormSchemaService
                 case 'phone':
                     $fieldRules[] = 'string';
                     break;
+                case 'unit':
+                    $fieldRules[] = 'numeric';
+                    $decimalPlaces = $data['decimal_places'] ?? 2;
+                    if ($decimalPlaces > 0) {
+                        $fieldRules[] = 'regex:/^\d+(\.\d{1,'.$decimalPlaces.'})?$/';
+                    }
+                    break;
             }
 
             $rules[$key] = $fieldRules;
@@ -235,6 +242,27 @@ class FormSchemaService
 
             case 'phone':
                 $component = \Filament\Forms\Components\TextInput::make($key)->tel();
+                break;
+
+            case 'unit':
+                $config = new \App\Config\UnitConfig();
+                $unitType = $data['unit_type'] ?? null;
+                $unitKey = $data['unit'] ?? null;
+                $decimalPlaces = $data['decimal_places'] ?? 2;
+
+                if (! $unitType || ! $unitKey) {
+                    // Fallback if configuration is incomplete
+                    $component = \Filament\Forms\Components\TextInput::make($key)->numeric();
+                    break;
+                }
+
+                $unitSymbol = $config->getUnitSymbol($unitType, $unitKey, $locale);
+
+                $component = \Filament\Forms\Components\TextInput::make($key)
+                    ->numeric()
+                    ->suffix($unitSymbol)
+                    ->step(pow(10, -$decimalPlaces))
+                    ->inputMode('decimal');
                 break;
 
             default:
